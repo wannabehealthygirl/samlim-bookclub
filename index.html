@@ -1,0 +1,318 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>삼림이식회 문장노트</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* 레이아웃: 책 한 권을 펼친 듯한 좁은 한 단(680px). 위 책 정보 → 탭 → 주간 칸표 → 문장 카드.
+   문장은 명조 + 형광펜 밑줄, 화면 조작 글자는 고딕. 색은 먹색 계열 하나에 형광펜 한 가지만. */
+:root{
+  --paper:#f5f6f3; --sheet:#ffffff; --ink:#1e2320; --muted:#6a716c; --rule:#dcdfda;
+  --pencil:#3d5a73; --mark:rgba(236,214,92,.55); --dot:#1e2320; --dot-off:#e7e9e5;
+  --serif:'Nanum Myeongjo','Batang',serif;
+  --sans:'IBM Plex Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+  --fs-xs:.75rem; --fs-sm:.875rem; --fs-md:1rem; --fs-lg:1.1875rem; --fs-xl:1.75rem;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#151816; --sheet:#1c201d; --ink:#e4e7e2; --muted:#9aa29c; --rule:#30352f;
+  --pencil:#9db8cf; --mark:rgba(196,170,40,.38); --dot:#e4e7e2; --dot-off:#2b302c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#151816; --sheet:#1c201d; --ink:#e4e7e2; --muted:#9aa29c; --rule:#30352f;
+  --pencil:#9db8cf; --mark:rgba(196,170,40,.38); --dot:#e4e7e2; --dot-off:#2b302c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:var(--fs-md);line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+.wrap>*,section>*,.feed>*{min-width:0;max-width:100%}
+main{display:flex;flex-direction:column;gap:28px}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--pencil);outline-offset:2px;border-radius:4px}
+
+/* 책 정보 */
+.mast{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-size:var(--fs-xs);letter-spacing:.08em;color:var(--muted)}
+.book-title{font-family:var(--serif);font-weight:800;font-size:var(--fs-xl);line-height:1.25;margin:0;text-wrap:balance}
+.meta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:var(--fs-sm);color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+
+/* 탭 */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--rule)}
+.tab{padding:8px 12px;font-size:var(--fs-sm);color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;text-decoration:none}
+.tab[aria-current="page"]{color:var(--ink);border-color:var(--ink);font-weight:600}
+
+section{display:flex;flex-direction:column;gap:14px}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sec-h h2{font-size:var(--fs-md);font-weight:600;margin:0}
+.hint{font-size:var(--fs-xs);color:var(--muted)}
+
+/* 주간 칸표 */
+.board-wrap{overflow-x:auto;background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:12px}
+.board{display:grid;grid-template-columns:minmax(64px,1fr) repeat(7,30px) 52px;gap:6px 4px;align-items:center;font-variant-numeric:tabular-nums;min-width:330px}
+.board .dh{font-size:var(--fs-xs);color:var(--muted);text-align:center}
+.board .dh.today{color:var(--ink);font-weight:600}
+.board .nm{font-size:var(--fs-sm);text-align:left;padding:2px 0;text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
+.cell{height:26px;border-radius:4px;background:var(--dot-off);display:flex;align-items:center;justify-content:center;font-size:var(--fs-xs);font-weight:600}
+.cell.on{background:var(--dot);color:var(--paper)}
+.cell.future{background:transparent;border:1px dashed var(--rule)}
+.tot{font-size:var(--fs-sm);text-align:right;white-space:nowrap}
+.tot.ok{font-weight:600}
+.tot.ok::after{content:" ✓"}
+.weeknav{display:flex;gap:6px;align-items:center;font-size:var(--fs-sm)}
+.weeknav button{padding:2px 8px;border:1px solid var(--rule);border-radius:4px}
+.weeknav button:disabled{opacity:.35;cursor:default}
+
+/* 문장 카드 */
+.feed{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card-top{display:flex;gap:10px;align-items:baseline;font-size:var(--fs-xs);color:var(--muted);flex-wrap:wrap}
+.card-top .who{color:var(--ink);font-weight:600;font-size:var(--fs-sm);text-decoration:none}
+.card-top .pg{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--pencil);font-weight:600}
+.quote{font-family:var(--serif);font-size:var(--fs-lg);line-height:1.85;margin:0;word-break:keep-all;overflow-wrap:anywhere}
+.quote span{background:linear-gradient(transparent 58%,var(--mark) 58%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.thought{font-size:var(--fs-sm);color:var(--muted);margin:0;white-space:pre-line;border-left:2px solid var(--rule);padding-left:10px}
+.photo{font-size:var(--fs-sm);color:var(--muted)}
+mark{background:var(--mark);color:inherit}
+
+/* 사람 고르기 */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:5px 12px;border:1px solid var(--rule);border-radius:999px;font-size:var(--fs-sm);text-decoration:none;background:var(--sheet)}
+.chip[aria-current="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* 개인 페이지 */
+.person-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.person-h h2{font-family:var(--serif);font-size:var(--fs-xl);margin:0}
+.weeks{display:flex;flex-wrap:wrap;gap:6px}
+.wk{font-size:var(--fs-xs);padding:4px 10px;border-radius:4px;background:var(--dot-off);font-variant-numeric:tabular-nums}
+.wk.ok{background:var(--dot);color:var(--paper)}
+
+.search{width:100%;padding:10px 12px;font:inherit;border:1px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
+.empty{padding:24px;text-align:center;color:var(--muted);font-size:var(--fs-sm);background:var(--sheet);border:1px dashed var(--rule);border-radius:6px}
+.next{font-size:var(--fs-sm);color:var(--muted)}
+footer{font-size:var(--fs-xs);color:var(--muted);border-top:1px solid var(--rule);padding-top:14px;display:flex;flex-direction:column;gap:4px}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--muted)}}
+</style>
+
+<div class="wrap">
+  <header class="mast" id="mast"></header>
+  <nav class="tabs" id="tabs" aria-label="보기"></nav>
+  <main id="view"></main>
+  <footer id="foot"></footer>
+</div>
+
+<script>
+var DATA = {"updated": "2026-11-08T21:02", "weeklyTarget": 3, "books": [{"id": "b1", "title": "끝내주는 이야기", "start": "2026-11-05", "end": "2026-11-15", "meeting": "2026-11-15 20:00"}], "nextBooks": ["최강의 식사", "특이점이 온다"], "members": [{"key": "dajeong", "name": "이다정"}, {"key": "wonju", "name": "한원주"}, {"key": "jena", "name": "박제나"}, {"key": "eunsol", "name": "이은솔"}, {"key": "narae", "name": "최나래"}, {"key": "hyejin", "name": "조혜진"}], "certs": [{"id": "3967714021009864705", "m": "jena", "d": "2026-11-05", "p": null, "s": "곡 전체를 연주하려고 욕심내지마. 지금 네 폭표는 완주가 아니라, 딱 이 8마디만 '제대로'끝내는 거야", "t": "퇴근전에 잠시 읽다가 다음일정 생각에 또 금방 책을 덮었습니다.\n마음의 여유를 조금 더 가져보도록 하려 합니다.\n모두 이번주 잘 마무리 하세요 :)", "b": "b1", "k": "text"}, {"id": "3967963819193481217", "m": "jena", "d": "2026-11-06", "p": null, "s": "크고 원대한 목표를 단숨에 도달하기는 어렵다. 오직 정교한 청킹의 누적으로 완성된다.", "t": "어찌 보면 익숙하고 조금은 상투적으로 느껴지는 말인데, '정교한'이란 단어가 마음에 든?\n\n‘일주일에 4초’를 목표로 애니메이션을 만든다는것이\n왠지모를 편안한 기분이 느껴졌어요.", "b": "b1", "k": "text"}, {"id": "3968096968640940036", "m": "eunsol", "d": "2026-11-06", "p": null, "s": "목표로 향하는 대기 시간을 얼마나 정교하게 쪼갰느냐에 따라 기다리는 과정 하나하나가 스트레스가 아니라 신선한 경험이 되고 정복하고 싶은 마일스톤이 되는 것이다.", "t": "청킹이라는거 제 삶에도 적용시켜야겠다는 생각이 드네요", "b": "b1", "k": "text"}, {"id": "3968118540980054018", "m": "dajeong", "d": "2026-11-06", "p": null, "s": "끝까지 해내는 힘은 대단한 정신력에서 나오는 게 아니다. 손을 뻗으면 닿을 듯한 작은 성공들이 차곡차곡 쌓여 만 들어내는 성취감 덕분이다. 이것이 바로지치지 않고 즐겁게 계속 나아갈 수 있는 진짜 비결이다.", "t": "매일매일 나의 과제들을 청킹해서 작은 성공들을 만들며 성취감을 지속해나가려면 어떻게해야할지 즐거운 고민을 하게되는 문구여서 와닿았습니다", "b": "b1", "k": "text"}, {"id": "3968826810036250625", "m": "eunsol", "d": "2026-11-07", "p": null, "s": "목표의 크기도 자신의 역량에 맞고 도달할 거리도 짧을 때 지루함을 이겨내고 매일 반복할 수 있는 기세를 얻을 수 있다.", "t": "계속해서 청킹과 목표 세분화에 대한 얘기를 하는 내용을 읽고 있어요! 저도 최근에 두루뭉술하게 할 일 정한 것에 대해 하루에 1개만 제대로 파기로 목표를 바꿔 실행하려 합니다.", "b": "b1", "k": "text"}, {"id": "3968895152200706049", "m": "hyejin", "d": "2026-11-07", "p": 26, "s": "픽사가 수십년간 업계를 불문하고 최고의 자리를 지킨 위대함은 결코 원대한 비전에 있지 않다. 미래에 대한 무시무시한 압박을 일주일에 4초라는, 손을 뻗으면 당장 닿을듯한 크기로 잘게 부수어주는 시스템에 있다.", "t": "위대한 천재들도 원대한 목표보다는 구체적 단기 달성목표를 설정하고 이를 실행한다는 점이 인상깊은 동시에 천재가 아닌 보통의 내가 너무 먼 미래의 큰 그림만 보고 있지않나 생각하게 되었네요. 내가 현재 가장 집중해야 할 부분이 어디고 무엇인지 다시한번 고민해야겠다고 생각했습니다.", "b": "b1", "k": "text"}, {"id": "3969317044631900161", "m": "wonju", "d": "2026-11-08", "p": 45, "s": "생각해보면 우리 주변에서 외국어를 '잘' 구사하는 능력자들은 일상적이고 구체적인 상황을 남들보다 많이 경험하고 매 순간 대회를 많이 끝내본 사람들에 가깝다. 공항의 입국심사 통과하기, 상점 계산대에서 봉투를 요구하기, 술집에서 처음 본 사람에게 자기소개 하기, 정중한 사과 부탁하기. 그런 작은 장면들을 반복해서 자신의 것으로 체득한 사람들이다.", "t": "영어공부에 12주 단위로 끊어서 적용해보려교요~", "b": "b1", "k": "text"}, {"id": "3969317826978648065", "m": "wonju", "d": "2026-11-08", "p": 88, "s": "실패에서 얻은 피드백을 유의미한 데이터로 치환하는 속도에서 진짜 실력이 판가름 난다.", "t": "", "b": "b1", "k": "text"}, {"id": "3969322549655900161", "m": "wonju", "d": "2026-11-08", "p": 101, "s": "스코세이지는 영화의 흥행이나 자기만의 작품 세계 구축이라는 결과보다 오늘 주어진 '8마디'의 과업을 정교하게 마무리하는 '과정의 완결'에 집중한다.", "t": "이번 프로젝트에서 진행하는 업무의 다양성과 범위에 스트레스가 심했었는데 퀘스트를 하나씩 깨는 마음으로 하고있어요.\n이번달의 저의 8마디는 콘테츠기획과 디자인 120장 & 프론트엔드 개발자의 영역까지 산출물화하여 인도팀에 전달하는것.\n숨막히는 일정을 매일의 '8마디 완결'로 쪼개어\n저를 위로해보려고 합니다.", "b": "b1", "k": "text"}]};
+(function(){
+  var D = DATA, $ = function(id){return document.getElementById(id)};
+  var DAYS = ['월','화','수','목','금','토','일'];
+  var byKey = {}; D.members.forEach(function(m){ byKey[m.key] = m; });
+  var weekOffset = 0;
+
+  function pad(n){ return n < 10 ? '0'+n : ''+n; }
+  function iso(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function parse(s){ var p = s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+  function addDays(s, n){ var d = parse(s); d.setDate(d.getDate()+n); return iso(d); }
+  function mondayOf(s){ var d = parse(s); d.setDate(d.getDate() - ((d.getDay()+6)%7)); return iso(d); }
+  function md(s){ var p = s.split('-'); return (+p[1])+'.'+(+p[2]); }
+  function dow(s){ return DAYS[(parse(s).getDay()+6)%7]; }
+  function today(){ var n = new Date(); if (n.getHours() < 5) n.setDate(n.getDate()-1); return iso(n); }
+  function el(tag, cls, txt){ var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function book(id){ return D.books.filter(function(b){return b.id === id})[0] || D.books[D.books.length-1]; }
+  function currentBook(){
+    var t = today(), cur = D.books[0];
+    D.books.forEach(function(b){ if (b.start <= t) cur = b; });
+    return cur;
+  }
+  function sorted(list){ return list.slice().sort(function(a,b){ return a.d < b.d ? 1 : a.d > b.d ? -1 : (a.id < b.id ? 1 : -1); }); }
+
+  function masthead(){
+    var b = currentBook(), m = $('mast'); m.textContent = '';
+    m.appendChild(el('div','eyebrow','삼림이식회 독서모임 · 기억에 남는 문장'));
+    m.appendChild(el('h1','book-title', b.title));
+    var meta = el('div','meta');
+    meta.appendChild(el('span', null, md(b.start)+' – '+md(b.end)));
+    var mt = b.meeting.split(' '), left = Math.round((parse(mt[0]) - parse(today()))/864e5);
+    var s = el('span'); s.appendChild(document.createTextNode('줌 모임 '));
+    s.appendChild(el('b', null, md(mt[0])+'('+dow(mt[0])+') '+mt[1]));
+    if (left > 0) s.appendChild(document.createTextNode(' · D-'+left));
+    else if (left === 0) s.appendChild(document.createTextNode(' · 오늘'));
+    meta.appendChild(s);
+    var n = D.certs.filter(function(c){return c.b === b.id}).length;
+    meta.appendChild(el('span', null, '문장 '+n+'개'));
+    m.appendChild(meta);
+  }
+
+  function tabs(route){
+    var t = $('tabs'); t.textContent = '';
+    [['', '이번 주'], ['#book', '책 전체'], ['#people', '사람별'], ['#search', '찾기']].forEach(function(x){
+      var a = el('a','tab', x[1]); a.href = x[0] || '#week';
+      var on = (route === x[0]) || (x[0] === '#people' && route.indexOf('#m-') === 0);
+      if (on) a.setAttribute('aria-current','page');
+      t.appendChild(a);
+    });
+  }
+
+  function card(c, showWho){
+    var k = el('article','card'), top = el('div','card-top');
+    if (showWho !== false){ var w = el('a','who', byKey[c.m].name); w.href = '#m-'+c.m; top.appendChild(w); }
+    top.appendChild(el('span', null, md(c.d)+' '+dow(c.d)));
+    if (c.p) top.appendChild(el('span','pg','p.'+c.p));
+    k.appendChild(top);
+    if (c.k === 'photo' && !c.s){ k.appendChild(el('p','photo','사진으로 인증했어요')); return k; }
+    var q = el('p','quote'); q.appendChild(el('span', null, c.s)); k.appendChild(q);
+    if (c.t) k.appendChild(el('p','thought', c.t));
+    return k;
+  }
+
+  function countOn(key, day){ return D.certs.filter(function(c){ return c.m === key && c.d === day; }).length; }
+
+  function board(){
+    var sec = el('section'), h = el('div','sec-h');
+    var mon = addDays(mondayOf(today()), 7*weekOffset), sun = addDays(mon, 6);
+    h.appendChild(el('h2', null, md(mon)+' – '+md(sun)+' 인증'));
+    var nav = el('div','weeknav');
+    var first = mondayOf(D.books[0].start);
+    var prev = el('button', null, '‹'); prev.setAttribute('aria-label','지난주'); prev.disabled = mon <= first;
+    prev.onclick = function(){ weekOffset--; render(); };
+    var next = el('button', null, '›'); next.setAttribute('aria-label','다음 주'); next.disabled = weekOffset >= 0;
+    next.onclick = function(){ weekOffset++; render(); };
+    nav.appendChild(prev); nav.appendChild(el('span','hint','주 '+D.weeklyTarget+'회 목표')); nav.appendChild(next);
+    h.appendChild(nav); sec.appendChild(h);
+
+    var wrap = el('div','board-wrap'), g = el('div','board'), t = today();
+    g.appendChild(el('span'));
+    for (var i = 0; i < 7; i++){ var dd = addDays(mon, i); g.appendChild(el('span','dh'+(dd === t ? ' today' : ''), DAYS[i])); }
+    g.appendChild(el('span','dh','합계'));
+    D.members.forEach(function(m){
+      var nm = el('a','nm', m.name.slice(1)); nm.href = '#m-'+m.key; nm.title = m.name; g.appendChild(nm);
+      var tot = 0;
+      for (var i = 0; i < 7; i++){
+        var d = addDays(mon, i), n = countOn(m.key, d); tot += n;
+        var c = el('span','cell'+(n ? ' on' : (d > t ? ' future' : '')), n > 1 ? String(n) : '');
+        c.title = m.name+' '+md(d)+' '+n+'개'; g.appendChild(c);
+      }
+      g.appendChild(el('span','tot'+(tot >= D.weeklyTarget ? ' ok' : ''), tot+'회'));
+    });
+    wrap.appendChild(g); sec.appendChild(wrap);
+    sec.appendChild(el('p','hint','칸 안 숫자는 그날 올린 문장 수예요. 하루에 여러 개 올리면 올린 만큼 셉니다.'));
+    return sec;
+  }
+
+  function weekView(){
+    var v = document.createDocumentFragment();
+    v.appendChild(board());
+    var mon = addDays(mondayOf(today()), 7*weekOffset), sun = addDays(mon, 6);
+    var list = sorted(D.certs.filter(function(c){ return c.d >= mon && c.d <= sun; }));
+    var sec = el('section'), h = el('div','sec-h');
+    h.appendChild(el('h2', null, '이번 주에 남긴 문장')); h.appendChild(el('span','hint', list.length+'개'));
+    sec.appendChild(h);
+    if (!list.length) sec.appendChild(el('div','empty','아직 이 주에 올라온 문장이 없어요. 카톡방에 문장을 올리면 다음 날 아침 여기에 모입니다.'));
+    var f = el('div','feed'); list.forEach(function(c){ f.appendChild(card(c)); }); sec.appendChild(f);
+    v.appendChild(sec);
+    return v;
+  }
+
+  function bookView(){
+    var b = currentBook(), sec = el('section'), h = el('div','sec-h');
+    var list = D.certs.filter(function(c){ return c.b === b.id; }).sort(function(a,b){
+      if (a.p && b.p) return a.p - b.p; if (a.p) return -1; if (b.p) return 1; return a.d < b.d ? -1 : 1; });
+    h.appendChild(el('h2', null, '「'+b.title+'」에 모두가 남긴 문장'));
+    h.appendChild(el('span','hint','쪽수 순서 · 쪽수 없는 문장은 뒤에'));
+    sec.appendChild(h);
+    if (!list.length) sec.appendChild(el('div','empty','아직 이 책 문장이 없어요.'));
+    var f = el('div','feed'); list.forEach(function(c){ f.appendChild(card(c)); }); sec.appendChild(f);
+    if (D.nextBooks.length) sec.appendChild(el('p','next','다음 책 후보 · '+D.nextBooks.join(' · ')));
+    return sec;
+  }
+
+  function chips(active){
+    var c = el('div','chips');
+    D.members.forEach(function(m){
+      var a = el('a','chip', m.name); a.href = '#m-'+m.key;
+      if (m.key === active) a.setAttribute('aria-current','true');
+      c.appendChild(a);
+    });
+    return c;
+  }
+
+  function peopleView(){
+    var sec = el('section'), h = el('div','sec-h');
+    h.appendChild(el('h2', null, '이름을 누르면 그 사람이 남긴 문장을 한 번에 볼 수 있어요'));
+    sec.appendChild(h); sec.appendChild(chips(null));
+    return sec;
+  }
+
+  function personView(key){
+    var m = byKey[key]; if (!m) return peopleView();
+    var sec = el('section'); sec.appendChild(chips(key));
+    var mine = D.certs.filter(function(c){ return c.m === key; });
+    var h = el('div','person-h'); h.appendChild(el('h2', null, m.name));
+    h.appendChild(el('span','hint','문장 '+mine.length+'개')); sec.appendChild(h);
+    var weeks = {}, ws = el('div','weeks');
+    mine.forEach(function(c){ var w = mondayOf(c.d); weeks[w] = (weeks[w]||0)+1; });
+    var w = mondayOf(D.books[0].start), last = mondayOf(today());
+    while (w <= last){
+      var n = weeks[w] || 0;
+      ws.appendChild(el('span','wk'+(n >= D.weeklyTarget ? ' ok' : ''), md(w)+' 주 '+n+'회'));
+      w = addDays(w, 7);
+    }
+    sec.appendChild(ws);
+    D.books.slice().reverse().forEach(function(b){
+      var list = mine.filter(function(c){ return c.b === b.id; }).sort(function(a,b){ return a.d < b.d ? -1 : 1; });
+      if (!list.length) return;
+      var bh = el('div','sec-h'); bh.appendChild(el('h2', null, '「'+b.title+'」')); bh.appendChild(el('span','hint', list.length+'개'));
+      sec.appendChild(bh);
+      var f = el('div','feed'); list.forEach(function(c){ f.appendChild(card(c, false)); }); sec.appendChild(f);
+    });
+    if (!mine.length) sec.appendChild(el('div','empty','아직 남긴 문장이 없어요. 카톡방에 첫 문장을 올려 주세요.'));
+    return sec;
+  }
+
+  var q = '';
+  function searchView(){
+    var sec = el('section'), inp = el('input','search');
+    inp.id = 'q'; inp.type = 'search'; inp.placeholder = '낱말로 찾기 (예: 청킹)'; inp.value = q;
+    inp.setAttribute('aria-label','문장 찾기');
+    var res = el('div','feed');
+    function run(){
+      q = inp.value.trim(); res.textContent = '';
+      if (!q){ res.appendChild(el('div','empty','찾을 낱말을 넣어 주세요.')); return; }
+      var hits = sorted(D.certs.filter(function(c){ return (c.s+' '+c.t).indexOf(q) >= 0; }));
+      if (!hits.length){ res.appendChild(el('div','empty','「'+q+'」이 들어간 문장이 없어요.')); return; }
+      hits.forEach(function(c){
+        var k = card(c);
+        k.querySelectorAll('.quote span, .thought').forEach(function(node){
+          var txt = node.textContent, i = txt.indexOf(q); if (i < 0) return;
+          node.textContent = '';
+          node.appendChild(document.createTextNode(txt.slice(0,i)));
+          node.appendChild(el('mark', null, q));
+          node.appendChild(document.createTextNode(txt.slice(i+q.length)));
+        });
+        res.appendChild(k);
+      });
+    }
+    inp.addEventListener('input', run);
+    sec.appendChild(inp); sec.appendChild(res); run();
+    setTimeout(function(){ try{ inp.focus(); }catch(e){} }, 0);
+    return sec;
+  }
+
+  function render(){
+    var r = location.hash; if (r === '#week') r = '';
+    masthead(); tabs(r);
+    var v = $('view'); v.textContent = '';
+    if (r === '#book') v.appendChild(bookView());
+    else if (r === '#people') v.appendChild(peopleView());
+    else if (r === '#search') v.appendChild(searchView());
+    else if (r.indexOf('#m-') === 0) v.appendChild(personView(r.slice(3)));
+    else v.appendChild(weekView());
+    var f = $('foot'); f.textContent = '';
+    var u = D.updated.replace('T',' ').split(' ');
+    f.appendChild(el('span', null, '마지막 반영 '+md(u[0])+' '+u[1]+' · 카톡방에 올린 문장이 매일 아침 모입니다'));
+    f.appendChild(el('span', null, '빠졌거나 잘못 들어간 문장은 방에 말씀해 주세요. 새벽 5시 전에 올린 문장은 전날 몫으로 셉니다.'));
+  }
+  window.addEventListener('hashchange', function(){ weekOffset = 0; render(); window.scrollTo(0,0); });
+  render();
+})();
+</script>
+</body></html>
